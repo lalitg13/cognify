@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cognify — AI Academic & Exam Architect</title>
+  
+  <!-- Premium Modern Typography: Outfit (Display) + Plus Jakarta Sans (Body) + JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            pitch: '#000000',
+            canvas: '#040407',
+            surface: '#08080d',
+            card: 'rgba(14, 14, 22, 0.7)'
+          },
+          fontFamily: {
+            sans: ['Plus Jakarta Sans', 'sans-serif'],
+            display: ['Outfit', 'sans-serif'],
+            outfit: ['Outfit', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Cognify Fluid Architecture Stylesheet -->
+  <link rel="stylesheet" href="/static/css/style.css" />
+</head>
+<body class="bg-black text-white antialiased font-sans selection:bg-cyan-500 selection:text-black">
+
+  <!-- Ambient Glow Backdrop & Grid Overlay -->
+  <div class="ambient-glow-backdrop" id="ambient-backdrop" aria-hidden="true"></div>
+  <div class="grid-overlay" aria-hidden="true"></div>
+
+  <!-- Main Website Shell -->
+  <div class="relative z-10 min-h-screen flex flex-col">
+    
+    <!-- Top Global Header (Minimalist Navigation) -->
+    <header class="w-full border-b border-white/[0.06] bg-black/75 backdrop-blur-2xl sticky top-0 z-50 px-6 sm:px-12 lg:px-16 py-4 flex items-center justify-between">
+      
+      <!-- Brand Logo -->
+      <div class="flex items-center gap-8">
+        <a href="#" class="flex items-center gap-3 text-white hover:opacity-90 transition group">
+          <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-cyan-400 via-blue-500 to-indigo-500 p-[1px] shadow-lg shadow-cyan-500/20 group-hover:shadow-cyan-500/40 transition">
+            <div class="w-full h-full bg-black rounded-[11px] flex items-center justify-center">
+              <svg width="18" height="18" class="w-4 h-4 text-cyan-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+                <line x1="12" y1="22.08" x2="12" y2="12"/>
+              </svg>
+            </div>
+          </div>
+          <span class="font-display text-xl font-bold tracking-tight text-white">Cognify</span>
+        </a>
+
+        <!-- Center Nav Links -->
+        <nav class="hidden md:flex items-center gap-8 text-xs uppercase tracking-widest font-medium text-slate-400">
+          <a href="#hero-section" class="hover:text-white transition">Overview</a>
+          <a href="#studio-section" class="hover:text-white transition">Studio</a>
+          <a href="#telemetry-section" class="hover:text-white transition">Telemetry</a>
+        </nav>
+      </div>
+
+      <!-- Right Header Actions -->
+      <div class="flex items-center gap-3.5">
+        <!-- Live AI Mode Indicator -->
+        <div id="ai-mode-badge" class="hidden sm:flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-mono bg-zinc-950/80 border border-white/10 text-zinc-300">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span id="ai-mode-text">Zero-Config Mode</span>
+        </div>
+
+        <!-- API Key Modal Trigger -->
+        <button id="btn-api-key-modal" class="btn-pill-secondary text-xs px-3.5 py-1.5" title="Configure Gemini API Key">
+          <svg width="14" height="14" class="w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3L22 7l-3-3"/>
+          </svg>
+          <span>API Key</span>
+        </button>
+
+        <!-- Primary CTA Pill -->
+        <a href="#studio-section" class="btn-pill-primary">
+          <span>Architect Now</span>
+          <svg width="14" height="14" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </a>
+      </div>
+    </header>
+
+    <!-- =====================================================================
+         1. HERO SECTION (Expo-Style Clean Layout)
+         ===================================================================== -->
+    <section id="hero-section" class="relative px-6 sm:px-12 lg:px-20 py-16 lg:py-24 max-w-7xl mx-auto w-full flex-1 flex flex-col justify-center">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+        
+        <!-- Left Side: Editorial Typography & Fluid Value Proposition -->
+        <div class="lg:col-span-7 flex flex-col items-start text-left space-y-6">
+          
+          <!-- Pill Badge -->
+          <div class="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-white/[0.03] border border-white/10 text-xs font-mono text-slate-300">
+            <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+            <span>Gemini 2.5 Flash • Zero-Config Offline Resilience</span>
+          </div>
+
+          <!-- Main Editorial Headline -->
+          <h1 class="text-4xl sm:text-6xl font-display font-light tracking-tight text-white leading-[1.12]">
+            Cognify crafts the <span class="font-bold text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-100 to-slate-400">universal architecture</span> to master exams.
+          </h1>
+
+          <!-- Airy, Generous Paragraph Copy -->
+          <p class="text-base sm:text-lg text-slate-400 font-light leading-relaxed max-w-xl">
+            Deconstruct complex notes and textbook chapters into structured concept breakdowns, interactive 3D active-recall flashcards, and diagnostic telemetry.
+          </p>
+
+          <!-- Action Buttons -->
+          <div class="flex flex-wrap items-center gap-4 pt-2">
+            <a href="#studio-section" class="btn-pill-primary px-7 py-3 text-sm">
+              <span>Launch Studio</span>
+              <svg width="16" height="16" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+
+            <button id="btn-hero-demo-calculus" class="btn-pill-secondary px-6 py-3 text-sm">
+              <svg width="16" height="16" class="w-4 h-4 text-cyan-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              <span>Explore Calculus Blueprint</span>
+            </button>
+          </div>
+
+          <!-- Micro Spec Badges -->
+          <div class="pt-4 border-t border-white/[0.06] flex flex-wrap items-center gap-6 text-xs font-mono text-slate-400">
+            <div class="flex items-center gap-2">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+              <span>100% Offline Capable</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+              <span>Anki TSV & Markdown Export</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="w-1.5 h-1.5 rounded-full bg-indigo-400"></span>
+              <span>Pydantic v2 Schema</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Right Side: 3D Floating Isometric Layer Animation -->
+        <div class="lg:col-span-5 flex justify-center">
+          <div class="isometric-stage" id="isometric-hero-stage" title="Interactive 3D Cognify Architectural Stack">
+            <div class="isometric-container" id="isometric-hero-container">
+              
+              <!-- Layer 1: Base Raw Notes -->
+              <div class="iso-layer iso-layer-1" data-jump="#studio-section">
+                <div class="text-[11px] font-mono text-slate-500 uppercase tracking-widest text-center px-4">
+                  01 // Raw Notes Ingestion
+                </div>
+              </div>
+
+              <!-- Layer 2: Blueprint Neural Deconstruction -->
+              <div class="iso-layer iso-layer-2" data-jump="#studio-section">
+                <div class="text-xs font-mono text-sky-300 font-semibold uppercase tracking-wider text-center px-4">
+                  02 // Conceptual Deconstruction
+                </div>
+              </div>
+
+              <!-- Layer 3: Vibrant Luminous Core -->
+              <div class="iso-layer iso-layer-3" data-jump="#studio-section">
+                <div class="text-sm font-display font-bold text-white uppercase tracking-wider text-center px-4 drop-shadow-md">
+                  03 // Active Recall & 3D Cards
+                </div>
+              </div>
+
+              <!-- Layer 4: Top Plate with Cognify Emblem -->
+              <div class="iso-layer iso-layer-4" data-jump="#telemetry-section">
+                <div class="flex flex-col items-center gap-2">
+                  <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-cyan-400 to-blue-500 p-[1px] shadow-xl">
+                    <div class="w-full h-full bg-black rounded-[15px] flex items-center justify-center">
+                      <svg width="24" height="24" class="w-6 h-6 text-cyan-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                        <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+                        <line x1="12" y1="22.08" x2="12" y2="12"/>
+                      </svg>
+                    </div>
+                  </div>
+                  <span class="text-xs font-display font-semibold text-white tracking-wide">Cognify Telemetry</span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         KINETIC MARQUEE STREAMER (Gliding Academic Ribbon)
+         ===================================================================== -->
+    <div class="border-y border-white/[0.06] bg-black/40 backdrop-blur-md">
+      <div class="marquee-wrapper">
+        <div class="marquee-track">
+          <div class="marquee-item"><span>⬡</span><span>Gradient Descent & Hessian Curvature</span></div>
+          <div class="marquee-item"><span>⬡</span><span>CRISPR-Cas9 Homology Directed Repair</span></div>
+          <div class="marquee-item"><span>⬡</span><span>Transformer Attention KV-Caching O(N)</span></div>
+          <div class="marquee-item"><span>⬡</span><span>Raft Consensus Quorum Safety Bounds</span></div>
+          <div class="marquee-item"><span>⬡</span><span>Ebbinghaus Spaced Synaptic Reconsolidation</span></div>
+          <div class="marquee-item"><span>⬡</span><span>Pydantic v2 Deterministic Invariants</span></div>
+          <div class="marquee-item"><span>⬡</span><span>Headless Pandas & Matplotlib Agg Engine</span></div>
+          <!-- Loop duplicate -->
+          <div class="marquee-item"><span>⬡</span><span>Gradient Descent & Hessian Curvature</span></div>
+          <div class="marquee-item"><span>⬡</span><span>CRISPR-Cas9 Homology Directed Repair</span></div>
+          <div class="marquee-item"><span>⬡</span><span>Transformer Attention KV-Caching O(N)</span></div>
+          <div class="marquee-item"><span>⬡</span><span>Raft Consensus Quorum Safety Bounds</span></div>
+          <div class="marquee-item"><span>⬡</span><span>Ebbinghaus Spaced Synaptic Reconsolidation</span></div>
+          <div class="marquee-item"><span>⬡</span><span>Pydantic v2 Deterministic Invariants</span></div>
+          <div class="marquee-item"><span>⬡</span><span>Headless Pandas & Matplotlib Agg Engine</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =====================================================================
+         TELEMETRY HORIZON (Rolling Number Counters)
+         ===================================================================== -->
+    <section class="border-b border-white/[0.06] bg-black/60 px-6 sm:px-12 py-10" id="metrics-strip">
+      <div class="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8">
+        
+        <div class="space-y-1.5 scroll-reveal reveal-pop stagger-1">
+          <p class="text-xs uppercase font-mono text-slate-500 tracking-wider">Total Study Packs</p>
+          <div class="flex items-baseline gap-2">
+            <span id="kpi-total-sessions" class="text-3xl sm:text-4xl font-display font-light text-white counter-number" data-target="3">3</span>
+            <span class="text-xs font-mono text-cyan-400">modules</span>
+          </div>
+          <p class="text-xs text-slate-500 font-light">Saved in local SQLite</p>
+        </div>
+
+        <div class="space-y-1.5 scroll-reveal reveal-pop stagger-2">
+          <p class="text-xs uppercase font-mono text-slate-500 tracking-wider">Mastery Benchmark</p>
+          <div class="flex items-baseline gap-2">
+            <span id="kpi-avg-mastery" class="text-3xl sm:text-4xl font-display font-light text-emerald-400">78.3%</span>
+            <span class="text-xs font-mono text-emerald-500 hidden sm:inline">Target ≥80%</span>
+          </div>
+          <p class="text-xs text-slate-500 font-light">Rolling attempt average</p>
+        </div>
+
+        <div class="space-y-1.5 scroll-reveal reveal-pop stagger-3">
+          <p class="text-xs uppercase font-mono text-slate-500 tracking-wider">Quizzes Logged</p>
+          <div class="flex items-baseline gap-2">
+            <span id="kpi-total-quizzes" class="text-3xl sm:text-4xl font-display font-light text-white counter-number" data-target="12">12</span>
+            <span class="text-xs font-mono text-indigo-400">attempts</span>
+          </div>
+          <p class="text-xs text-slate-500 font-light">Past 7 days telemetry</p>
+        </div>
+
+        <div class="space-y-1.5 scroll-reveal reveal-pop stagger-4">
+          <p class="text-xs uppercase font-mono text-slate-500 tracking-wider">Primary Weak Spot</p>
+          <p id="kpi-top-weak-spot" class="text-sm sm:text-base font-display font-medium text-amber-300 truncate" title="Top detected weakness">
+            Integration by Parts
+          </p>
+          <p class="text-xs text-slate-500 font-light">Auto-targeted remediation</p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         2. THE ACADEMIC STUDIO WORKSPACE (The Core Tool, Clean & Direct)
+         ===================================================================== -->
+    <section id="studio-section" class="px-6 sm:px-12 lg:px-20 py-16 lg:py-24 max-w-7xl mx-auto w-full">
+      
+      <!-- Studio Header Bar -->
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between pb-8 gap-4 border-b border-white/[0.06] scroll-reveal">
+        <div class="space-y-1.5">
+          <span class="text-xs font-mono uppercase tracking-widest text-cyan-400">Academic Studio</span>
+          <h2 class="text-2xl sm:text-3xl font-display font-bold text-white">Note Synthesis & Active Recall Engine</h2>
+        </div>
+
+        <!-- Export Menu Dropdown -->
+        <div class="relative inline-block text-left" id="export-dropdown-wrapper">
+          <button id="btn-export-menu" class="btn-pill-secondary text-xs px-4 py-2">
+            <svg width="14" height="14" class="w-3.5 h-3.5 text-cyan-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            <span>Export Study Guide</span>
+            <svg width="12" height="12" class="w-3 h-3 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          
+          <div id="export-dropdown-menu" class="hidden absolute right-0 mt-2 w-56 rounded-2xl bg-[#0e0e14] border border-white/10 shadow-2xl py-2 z-50 backdrop-blur-xl">
+            <a id="btn-export-markdown" href="#" class="menu-action-item">
+              <svg width="16" height="16" class="w-4 h-4 text-sky-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+              <span>Download Markdown (.md)</span>
+            </a>
+            <a id="btn-export-anki" href="#" class="menu-action-item">
+              <svg width="16" height="16" class="w-4 h-4 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+              <span>Download Anki Deck (.txt)</span>
+            </a>
+            <button id="btn-copy-guide" class="menu-action-item">
+              <svg width="16" height="16" class="w-4 h-4 text-indigo-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+              <span>Copy Guide to Clipboard</span>
+            </button>
+            <button id="btn-print-guide" class="menu-action-item">
+              <svg width="16" height="16" class="w-4 h-4 text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+              <span>Print / Save as PDF</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Studio Two-Column Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 pt-8">
+        
+        <!-- LEFT: Input Studio & Saved Modules (5 Cols) -->
+        <div class="lg:col-span-5 flex flex-col gap-6">
+          
+          <!-- Note Ingestion Card -->
+          <div class="spotlight-card p-7 flex flex-col gap-5 scroll-reveal">
+            <div class="spotlight-content flex items-center justify-between border-b border-white/[0.06] pb-3">
+              <span class="text-xs font-mono font-medium text-slate-400 uppercase tracking-wider">Input Architect</span>
+              <span class="text-[11px] font-mono text-cyan-400">Gemini 2.5 Flash</span>
+            </div>
+
+            <!-- Quick Topic Presets -->
+            <div class="spotlight-content space-y-2">
+              <label class="block text-xs font-medium text-slate-400">Load High-Yield Sample Notes:</label>
+              <div class="flex flex-wrap gap-2">
+                <button class="preset-tag" data-preset="calculus">Calculus: Gradient Descent</button>
+                <button class="preset-tag" data-preset="biology">Biology: CRISPR & DNA Repair</button>
+                <button class="preset-tag" data-preset="cs">CS: Transformers & KV-Cache</button>
+                <button class="preset-tag" data-preset="history">History: Cold War Deterrence</button>
+              </div>
+            </div>
+
+            <!-- Discipline Input -->
+            <div class="spotlight-content space-y-1">
+              <label for="subject-hint" class="block text-xs font-medium text-slate-300">Academic Discipline / Context:</label>
+              <input 
+                id="subject-hint" 
+                type="text" 
+                placeholder="e.g. STEM / Calculus, Molecular Biology, Distributed Systems" 
+                class="w-full px-4 py-2.5 rounded-2xl bg-black/60 border border-white/10 focus:border-cyan-400 text-sm text-white placeholder-slate-500 font-sans outline-none transition"
+              />
+            </div>
+
+            <!-- Notes Textarea -->
+            <div class="spotlight-content space-y-1">
+              <div class="flex items-center justify-between">
+                <label for="notes-input" class="text-xs font-medium text-slate-300">Raw Notes or Textbook Excerpt:</label>
+                <span id="char-counter" class="text-[11px] font-mono text-slate-500">0 characters</span>
+              </div>
+              <textarea 
+                id="notes-input" 
+                rows="7" 
+                placeholder="Paste raw lecture transcripts, messy textbook excerpts, or syllabus bullet points... Cognify will extract core concepts, 3D flashcards, formula sheets, active recall quizzes, and a structured study roadmap." 
+                class="w-full px-4 py-3 rounded-2xl bg-black/60 border border-white/10 focus:border-cyan-400 text-sm text-white placeholder-slate-500 font-sans leading-relaxed resize-y outline-none transition"
+              ></textarea>
+            </div>
+
+            <!-- Action Controls -->
+            <div class="spotlight-content flex items-center justify-between pt-1">
+              <button id="btn-clear-input" class="text-xs text-slate-400 hover:text-white transition">
+                Clear Form
+              </button>
+              
+              <button id="btn-generate" class="btn-pill-primary px-6 py-2.5">
+                <svg id="generate-spinner" class="w-4 h-4 animate-spin hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10" stroke-opacity="0.25"/>
+                  <path d="M12 2a10 10 0 0 1 10 10"/>
+                </svg>
+                <span id="generate-btn-text">Architect Study Pack</span>
+                <span class="text-[10px] font-mono opacity-50 hidden sm:inline">⌘+↵</span>
+              </button>
+            </div>
+
+          </div>
+
+          <!-- Saved Modules List -->
+          <div class="spotlight-card p-7 flex flex-col gap-4 scroll-reveal">
+            <div class="spotlight-content flex items-center justify-between border-b border-white/[0.06] pb-3">
+              <span class="text-xs font-mono font-medium text-slate-400 uppercase tracking-wider">Saved Study Packs</span>
+              <span id="session-count-tag" class="text-[11px] font-mono text-cyan-400">3 Saved</span>
+            </div>
+
+            <!-- Search Filter -->
+            <div class="spotlight-content">
+              <input 
+                id="history-search-input" 
+                type="text" 
+                placeholder="Search past sessions..." 
+                class="w-full px-4 py-2 text-xs rounded-2xl bg-black/60 border border-white/10 focus:border-white/25 text-white placeholder-slate-500 outline-none transition"
+              />
+            </div>
+
+            <!-- Sessions List -->
+            <div id="sessions-history-list" class="spotlight-content space-y-2 overflow-y-auto max-h-[320px] pr-1">
+              <div class="text-center py-6 text-xs text-slate-500 font-mono">Loading saved modules...</div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- RIGHT: Interactive Output Hub (7 Cols) -->
+        <div class="lg:col-span-7 flex flex-col gap-6">
+          
+          <!-- Tab Navigation Bar -->
+          <div class="flex items-center justify-between border-b border-white/[0.06] pb-3 overflow-x-auto scroll-reveal">
+            <div class="flex items-center gap-2 shrink-0">
+              <button class="tab-pill active" data-tab="tab-concepts">
+                <svg width="14" height="14" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                <span>Concepts & Formulas</span>
+              </button>
+
+              <button class="tab-pill" data-tab="tab-flashcards">
+                <svg width="14" height="14" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="m9 9 6 6M15 9l-6 6"/></svg>
+                <span>3D Flashcards</span>
+                <span id="flashcard-badge-count" class="px-2 py-0.2 rounded-full text-[10px] bg-cyan-500/10 text-cyan-400 font-mono">4</span>
+              </button>
+
+              <button class="tab-pill" data-tab="tab-quiz">
+                <svg width="14" height="14" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                <span>Active Quiz</span>
+                <span id="quiz-badge-count" class="px-2 py-0.2 rounded-full text-[10px] bg-blue-500/10 text-blue-400 font-mono">5 Qs</span>
+              </button>
+
+              <button class="tab-pill" data-tab="tab-roadmap">
+                <svg width="14" height="14" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+                <span>Study Protocol</span>
+              </button>
+            </div>
+
+            <div class="hidden sm:flex items-center gap-2">
+              <span id="session-difficulty-badge" class="px-3 py-1 text-xs font-mono font-medium rounded-full bg-white/[0.03] text-slate-400 border border-white/10">
+                Diff: 8/10
+              </span>
+            </div>
+          </div>
+
+          <!-- TAB 1: Concepts & Formulas -->
+          <div id="tab-concepts" class="tab-panel flex flex-col gap-6">
+            
+            <!-- Executive Summary Card -->
+            <div class="spotlight-card p-7 flex flex-col gap-4 scroll-reveal">
+              <div class="spotlight-content flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                  <span id="session-subject-tag" class="px-3 py-1 rounded-full text-xs font-mono font-medium bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">STEM / Calculus</span>
+                  <span class="text-xs text-slate-400 font-mono">• Executive Synthesis</span>
+                </div>
+
+                <!-- Audio Tutor Button -->
+                <button id="btn-read-aloud" class="btn-pill-secondary text-xs px-3 py-1">
+                  <svg id="audio-icon-play" width="14" height="14" class="w-3.5 h-3.5 text-cyan-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+                  <span id="audio-btn-label">Audio Tutor</span>
+                </button>
+              </div>
+
+              <h3 id="session-topic-title" class="spotlight-content text-xl sm:text-2xl font-display font-bold text-white leading-tight">
+                Calculus: Fundamental Theorem & Integration Techniques
+              </h3>
+
+              <p id="session-summary-text" class="spotlight-content text-sm sm:text-base text-slate-300 font-light leading-relaxed">
+                Core principles of differentiation and integration, focusing on substitution methods, integration by parts, accumulation functions, and curvature bounds.
+              </p>
+            </div>
+
+            <!-- Key Concepts Cards -->
+            <div class="space-y-3.5">
+              <span class="text-xs font-mono uppercase tracking-wider text-slate-400">Essential Mental Models</span>
+              <div id="concepts-container" class="grid grid-cols-1 gap-3.5"></div>
+            </div>
+
+            <!-- Core Formulas -->
+            <div id="formula-section" class="space-y-3.5 pt-2">
+              <span class="text-xs font-mono uppercase tracking-wider text-slate-400">Core Formulas & Invariants</span>
+              <div id="formula-container" class="grid grid-cols-1 gap-3"></div>
+            </div>
+
+            <!-- Common Misconceptions -->
+            <div id="misconceptions-section" class="space-y-3.5 pt-2">
+              <span class="text-xs font-mono uppercase tracking-wider text-rose-400">Common Exam Traps & Misconceptions</span>
+              <div id="misconceptions-container" class="grid grid-cols-1 gap-3"></div>
+            </div>
+
+          </div>
+
+          <!-- TAB 2: 3D Flip Flashcards -->
+          <div id="tab-flashcards" class="tab-panel hidden flex flex-col gap-6">
+            <div class="flex items-center justify-between text-xs font-mono text-slate-400 px-1">
+              <span>Card <strong id="fc-current-idx" class="text-white">1</strong> of <span id="fc-total-idx">4</span></span>
+              <span class="text-slate-500 hidden sm:inline">Click card or press Spacebar to flip</span>
+            </div>
+
+            <!-- 3D Flashcard Stage -->
+            <div class="flashcard-3d-scene" id="flashcard-scene">
+              <div class="flashcard-inner" id="flashcard-element">
+                <!-- Front Side -->
+                <div class="flashcard-side flashcard-front-side">
+                  <span class="text-[10px] font-mono uppercase tracking-widest text-cyan-400 absolute top-6 left-8">Active Recall Prompt</span>
+                  <p id="fc-front-text" class="text-lg sm:text-xl font-medium text-white text-center leading-relaxed max-w-md">
+                    What is the formula for Integration by Parts?
+                  </p>
+                  <span class="text-xs font-mono text-slate-500 absolute bottom-6">Click to flip</span>
+                </div>
+                
+                <!-- Back Side -->
+                <div class="flashcard-side flashcard-back-side">
+                  <span class="text-[10px] font-mono uppercase tracking-widest text-emerald-400 absolute top-6 left-8">Answer & Mechanism</span>
+                  <p id="fc-back-text" class="text-base sm:text-lg font-medium text-white text-center leading-relaxed max-w-md">
+                    ∫ u dv = uv - ∫ v du
+                  </p>
+                  <div id="fc-mnemonic-box" class="mt-4 px-3.5 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-xs text-cyan-300 font-mono">
+                    Mnemonic: Ultra Violet Voodoo
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Spaced Repetition Controls -->
+            <div class="spotlight-card p-5 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div class="spotlight-content flex items-center gap-2">
+                <button id="btn-fc-prev" class="btn-pill-secondary text-xs px-3.5 py-1.5">← Prev</button>
+                <button id="btn-fc-next" class="btn-pill-secondary text-xs px-3.5 py-1.5">Next →</button>
+              </div>
+
+              <!-- Leitner Rating Buttons -->
+              <div class="spotlight-content flex items-center gap-2">
+                <button class="rate-pill rate-again" data-rating="again">Again <span class="opacity-60 text-[10px]">1m</span></button>
+                <button class="rate-pill rate-hard" data-rating="hard">Hard <span class="opacity-60 text-[10px]">6m</span></button>
+                <button class="rate-pill rate-good" data-rating="good">Good <span class="opacity-60 text-[10px]">1d</span></button>
+                <button class="rate-pill rate-easy" data-rating="easy">Easy <span class="opacity-60 text-[10px]">4d</span></button>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 3: Active Recall Quiz Arena -->
+          <div id="tab-quiz" class="tab-panel hidden flex flex-col gap-6">
+            
+            <!-- Quiz Info Banner -->
+            <div class="spotlight-card p-5 flex items-center justify-between">
+              <div class="spotlight-content flex items-center gap-4">
+                <span class="text-xs font-mono text-slate-400">
+                  Question <strong id="quiz-current-idx" class="text-white">1</strong> of <span id="quiz-total-idx">5</span>
+                </span>
+                <div class="w-28 sm:w-36 h-1.5 rounded-full bg-zinc-900 overflow-hidden">
+                  <div id="quiz-progress-fill" class="h-full bg-gradient-to-r from-cyan-400 to-blue-500 transition-all duration-300" style="width: 20%;"></div>
+                </div>
+              </div>
+
+              <div class="spotlight-content flex items-center gap-4">
+                <div class="flex items-center gap-1.5 text-xs font-mono text-slate-300">
+                  <svg width="14" height="14" class="w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                  <span id="quiz-timer">00:00</span>
+                </div>
+
+                <span id="quiz-subtopic-tag" class="px-3 py-1 rounded-full text-xs font-mono bg-white/[0.04] text-slate-300 border border-white/10">
+                  Integration by Parts
+                </span>
+              </div>
+            </div>
+
+            <!-- Quiz Question Card -->
+            <div id="quiz-question-box" class="spotlight-card p-7 flex flex-col gap-6">
+              <div class="spotlight-content flex items-start justify-between gap-4">
+                <p id="quiz-question-prompt" class="text-base sm:text-lg font-medium text-white leading-relaxed flex-1">
+                  Which rule is best suited for prioritizing the choice of 'u' in integration by parts?
+                </p>
+                
+                <button id="btn-quiz-speech" class="p-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-slate-400 hover:text-white transition shrink-0" title="Listen to question">
+                  <svg width="16" height="16" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+                </button>
+              </div>
+
+              <!-- Options Grid -->
+              <div id="quiz-options-container" class="spotlight-content grid grid-cols-1 gap-2.5"></div>
+
+              <!-- Explanation Box -->
+              <div id="quiz-explanation-box" class="hidden spotlight-content p-4 rounded-2xl border text-sm leading-relaxed transition-all">
+                <div class="flex items-center gap-2 mb-1.5 font-semibold" id="quiz-grade-status"></div>
+                <p id="quiz-grade-explanation" class="text-slate-300 font-sans"></p>
+              </div>
+
+              <!-- Quiz Navigation Bar -->
+              <div class="spotlight-content flex items-center justify-between pt-2 border-t border-white/[0.06]">
+                <span class="text-xs text-slate-500 font-mono hidden sm:inline">Keyboard: Keys 1-4 to select • Enter to advance</span>
+                <button id="btn-next-question" class="btn-pill-primary ml-auto px-6 py-2 text-xs">
+                  Submit Answer
+                </button>
+              </div>
+            </div>
+
+            <!-- Quiz Completed Scorecard -->
+            <div id="quiz-results-card" class="hidden spotlight-card p-7 flex flex-col gap-6">
+              <div class="spotlight-content flex items-center justify-between border-b border-white/[0.06] pb-3">
+                <h3 class="text-lg font-display font-bold text-white">Diagnostic Scorecard</h3>
+                <span id="quiz-result-timestamp" class="text-xs font-mono text-slate-400">Just Now</span>
+              </div>
+
+              <div class="spotlight-content grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
+                <div class="p-4 rounded-2xl bg-black/60 border border-white/10">
+                  <p class="text-xs text-slate-400 uppercase font-mono">Score</p>
+                  <p id="result-score-pct" class="text-3xl font-display font-extrabold text-emerald-400 mt-1">80.0%</p>
+                </div>
+                <div class="p-4 rounded-2xl bg-black/60 border border-white/10">
+                  <p class="text-xs text-slate-400 uppercase font-mono">Duration</p>
+                  <p id="result-time-spent" class="text-2xl font-display font-bold text-white mt-1">1m 45s</p>
+                </div>
+                <div class="p-4 rounded-2xl bg-black/60 border border-white/10">
+                  <p class="text-xs text-slate-400 uppercase font-mono">Mastery Tier</p>
+                  <p id="result-tier-label" class="text-sm font-semibold text-cyan-400 mt-2">Mastery Achieved</p>
+                </div>
+              </div>
+
+              <div id="result-weak-subtopics-panel" class="spotlight-content p-4 rounded-2xl bg-amber-500/5 border border-amber-500/20 text-xs">
+                <p class="font-semibold text-amber-300 mb-1">Identified Weak-Spot Subtopics for Review:</p>
+                <div id="result-weak-tags-list" class="flex flex-wrap gap-1.5 mt-1.5"></div>
+              </div>
+
+              <div class="spotlight-content flex items-center justify-between pt-2">
+                <span class="text-xs text-slate-500 font-mono">Logged to SQLite telemetry stream.</span>
+                <button id="btn-retake-quiz" class="btn-pill-secondary text-xs px-4 py-2">
+                  Retake Quiz
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- TAB 4: Study Roadmap -->
+          <div id="tab-roadmap" class="tab-panel hidden flex flex-col gap-4">
+            <div class="spotlight-card p-7">
+              <span class="spotlight-content text-xs font-mono uppercase tracking-wider text-cyan-400">Sequential Milestones</span>
+              <h3 class="spotlight-content text-xl font-display font-bold text-white mt-1">Timed Study Protocol</h3>
+              <p class="spotlight-content text-sm text-slate-400 mt-1">Targeted tasks engineered to reinforce concepts and address identified weak spots.</p>
+            </div>
+            <div id="roadmap-container" class="space-y-3"></div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         3. TELEMETRY & ANALYTICS SECTION (Pandas + Matplotlib Engine)
+         ===================================================================== -->
+    <section id="telemetry-section" class="border-t border-white/[0.06] bg-[#040407] px-6 sm:px-12 lg:px-20 py-20 w-full">
+      <div class="max-w-7xl mx-auto flex flex-col gap-8">
+        
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 scroll-reveal">
+          <div class="space-y-1">
+            <span class="text-xs font-mono uppercase tracking-widest text-cyan-400">Continuous Diagnostics</span>
+            <h2 class="text-2xl sm:text-3xl font-display font-bold text-white">Pandas & Matplotlib Telemetry Engine</h2>
+            <p class="text-sm text-slate-400 font-light">Live publication-grade analytical figures streamed directly from SQLite.</p>
+          </div>
+
+          <div class="flex items-center gap-3">
+            <!-- View Mode Switcher -->
+            <div class="flex items-center p-1 rounded-full bg-white/[0.03] border border-white/10 text-xs font-medium">
+              <button id="btn-chart-mastery" class="px-3.5 py-1.5 rounded-full text-white bg-white/10 transition">Mastery & Retention</button>
+              <button id="btn-chart-diag" class="px-3.5 py-1.5 rounded-full text-slate-400 hover:text-white transition">Diagnostics & Pace</button>
+            </div>
+
+            <button id="btn-refresh-chart" class="btn-pill-secondary text-xs px-3.5 py-1.5" title="Refresh Live Chart">
+              <svg width="14" height="14" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.3"/></svg>
+              <span>Refresh</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Telemetry Figure Container -->
+        <div class="telemetry-chart-container p-4 sm:p-5 relative shadow-2xl scroll-reveal reveal-pop">
+          <div id="chart-loading-overlay" class="absolute inset-0 bg-black/70 backdrop-blur-xs flex items-center justify-center z-10 hidden">
+            <div class="flex items-center gap-2 text-xs font-mono text-slate-300">
+              <svg width="16" height="16" class="w-4 h-4 animate-spin text-cyan-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10" stroke-opacity="0.25"/>
+                <path d="M12 2a10 10 0 0 1 10 10"/>
+              </svg>
+              <span>Rendering Matplotlib Telemetry...</span>
+            </div>
+          </div>
+
+          <img 
+            id="telemetry-chart-img" 
+            src="/api/analytics.png?view=mastery" 
+            alt="Cognify Telemetry Figure" 
+            class="w-full h-auto rounded-2xl"
+          />
+        </div>
+
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         WEBSITE FOOTER
+         ===================================================================== -->
+    <footer class="border-t border-white/[0.06] px-6 sm:px-12 py-12 bg-black text-xs text-slate-500">
+      <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+        <div class="flex items-center gap-3">
+          <div class="w-7 h-7 rounded-xl bg-white/[0.05] flex items-center justify-center">
+            <svg width="14" height="14" class="w-3.5 h-3.5 text-cyan-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+            </svg>
+          </div>
+          <span class="font-display font-semibold text-white text-sm">Cognify</span>
+          <span>•</span>
+          <span class="text-slate-400">Academic & Exam Architecture Engine</span>
+        </div>
+
+        <div class="flex items-center gap-8 font-mono text-[11px] text-slate-400">
+          <span>Server: Flask 3.x (Port 5001)</span>
+          <span>DB: SQLite (data/cognify.db)</span>
+          <span>Model: Gemini 2.5 Flash</span>
+          <a href="#" class="text-slate-300 hover:text-white transition flex items-center gap-1">
+            <span>Back to Top</span>
+            <span>↑</span>
+          </a>
+        </div>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- API Key Modal -->
+  <div id="api-key-modal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+    <div class="w-full max-w-md rounded-3xl bg-[#0e0e14] border border-white/15 p-7 shadow-2xl flex flex-col gap-5">
+      <div class="flex items-center justify-between border-b border-white/[0.06] pb-4">
+        <h3 class="font-display font-bold text-white text-lg">Gemini API Key Configuration</h3>
+        <button id="btn-close-modal" class="text-slate-400 hover:text-white transition">
+          <svg width="20" height="20" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+
+      <p class="text-xs text-slate-300 font-light leading-relaxed">
+        Cognify is 100% operational in <strong class="text-emerald-400">Zero-Config Demo Mode</strong>. To connect directly to Google's <code class="text-cyan-300 font-mono">gemini-2.5-flash</code> model, supply your API key below or configure <code class="text-slate-200 font-mono">GEMINI_API_KEY</code> in <code class="text-slate-200 font-mono">.env</code>.
+      </p>
+
+      <div>
+        <label for="custom-api-key-input" class="block text-xs font-medium text-slate-300 mb-1.5">Gemini API Key:</label>
+        <input 
+          id="custom-api-key-input" 
+          type="password" 
+          placeholder="AIzaSy..." 
+          class="w-full px-4 py-3 rounded-2xl bg-black border border-white/10 text-sm text-white font-mono outline-none focus:border-cyan-400 transition"
+        />
+      </div>
+
+      <div class="flex items-center justify-between pt-2">
+        <button id="btn-clear-key" class="text-xs text-slate-400 hover:text-rose-400 transition">
+          Use Demo Mode
+        </button>
+        <button id="btn-save-key" class="btn-pill-primary px-5 py-2 text-xs">
+          Save Key
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2.5 pointer-events-none"></div>
+
+  <!-- App Client Logic -->
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
