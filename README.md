@@ -1,201 +1,182 @@
-# Cognify — AI-Powered Academic & Exam Architect
+# Cognify
 
-> An enterprise-grade, portfolio-ready web platform that transforms unstructured lecture transcripts and textbook excerpts into structured concept breakdowns, interactive 3D flashcards, active-recall quizzes, diagnostic telemetry, and headless Pandas/Matplotlib visual analytics.
-
-[![Python](https://img.shields.io/badge/Python-3.11+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
-[![Flask](https://img.shields.io/badge/Flask-3.0+-000000?style=for-the-badge&logo=flask&logoColor=white)](https://flask.palletsprojects.com/)
-[![Google Gemini](https://img.shields.io/badge/Gemini_2.5_Flash-8E75B2?style=for-the-badge&logo=google&logoColor=white)](https://ai.google.dev/)
-[![Pydantic v2](https://img.shields.io/badge/Pydantic-v2.7+-E92063?style=for-the-badge&logo=pydantic&logoColor=white)](https://docs.pydantic.dev/)
-[![Pandas](https://img.shields.io/badge/Pandas-2.2+-150458?style=for-the-badge&logo=pandas&logoColor=white)](https://pandas.pydata.org/)
-[![Matplotlib](https://img.shields.io/badge/Matplotlib-Agg_Headless-11557c?style=for-the-badge)](https://matplotlib.org/)
+A focused study tool that transforms raw lecture notes and textbook excerpts into structured concept breakdowns, 3D active-recall flashcards, and retention analytics.
 
 ---
 
-## ⚡ System Architecture
+## Why Cognify?
+
+Passive studying is deceptive. Highlighting notes and rereading textbook paragraphs creates the illusion of competence: the material looks familiar on the page, but when you are tested on an applied problem, recall collapses.
+
+Cognitive science has repeatedly shown that durable learning requires three things:
+1. **Active retrieval**: forcing your brain to pull information out, rather than passively recognizing it.
+2. **Spaced repetition**: reviewing concepts right when forgetting begins to set in.
+3. **Targeted diagnostics**: knowing exactly which subtopics you struggle with before exam day.
+
+I built Cognify to automate this entire workflow. You paste in messy notes, lecture transcripts, or textbook chapters, and Cognify deconstructs them into typed mental models, creates Leitner spaced-repetition flashcards, generates multiple-choice recall quizzes with detailed explanations, and visualizes your retention curve over time.
+
+---
+
+## What It Does
+
+- **Structured Concept Extraction**: Identifies primary theorems, definitions, formula derivations, and common exam traps without conversational filler.
+- **3D Leitner Flashcards**: Interactive cards with smooth 3D flip physics, keyboard bindings (Spacebar to flip, 1-4 to rate), and four spaced intervals (Again, Hard, Good, Easy).
+- **Active-Recall Quizzes**: Timed 5-question tests with instant grading, option rationales, and error-tagging that logs your weak spots directly to a local SQLite database.
+- **Speech Audio Tutor**: Reads executive summaries, definitions, and questions aloud using the Web Speech API for auditory review.
+- **Visual Performance Telemetry**: Uses headless Pandas and Matplotlib to plot your rolling retention curves and subject mastery averages over time.
+- **Universal Exports**: Download study packs as tab-separated Anki decks (`.txt`), clean Markdown (`.md`) for Obsidian and Notion, or print-ready PDF cheat sheets.
+- **Zero-Config Offline Fallback**: If you don't have a Google Gemini API key configured, Cognify automatically falls back to an offline dataset of realistic STEM and humanities topics, so the app is immediately usable upon cloning.
+
+---
+
+## System Architecture
 
 ```mermaid
 flowchart TD
-    subgraph Client["Frontend Architecture (Vanilla JS State Manager)"]
-        UI["DOM View Controller (Linear/Vercel #09090b Aesthetic)"]
-        State["AppState Store (Quiz, 3D Flashcards, Audio Tutor)"]
-        ClientAPI["ApiClient (Fetch / Async-Await)"]
+    subgraph Client["Frontend"]
+        UI["Web Interface (Vanilla JS)"]
+        State["State Store (Flashcards, Quizzes, Audio)"]
         UI --> State
-        State --> ClientAPI
     end
 
-    subgraph Server["Flask REST API Server (Port 5001)"]
-        Router["app.py Controller & Routes"]
-        AIEngine["ai_engine.py (Google GenAI + Pydantic v2)"]
-        DB["database.py (SQLite Persistence Layer)"]
-        Telemetry["analytics.py (Headless Pandas + Matplotlib Agg)"]
-        ExportEngine["Export Engine (Markdown & Anki TSV)"]
+    subgraph Server["Flask Application (Port 5001)"]
+        Router["app.py Controller"]
+        AI["ai_engine.py (Gemini 2.5 + Pydantic v2)"]
+        DB["database.py (SQLite Persistence)"]
+        Analytics["analytics.py (Pandas + Matplotlib Agg)"]
+        Export["Export Engine (Markdown & Anki)"]
         
-        ClientAPI -->|JSON Payload| Router
-        Router --> AIEngine
+        Router --> AI
         Router --> DB
-        Router --> Telemetry
-        Router --> ExportEngine
+        Router --> Analytics
+        Router --> Export
     end
 
-    subgraph External["Intelligence & Telemetry Storage"]
-        Gemini["Google Gemini 2.5 Flash API\n(Structured JSON Schema)"]
-        MockEngine["Zero-Config Offline Demo Engine\n(Adaptive Domain Synthesis)"]
-        SQLiteDB[("data/cognify.db\n(Sessions, Attempts, Flashcard Reviews)")]
-        ChartGen["Multi-View PNG Stream\n(/api/analytics.png?view=...)"]
+    subgraph Data["Storage & Intelligence"]
+        GeminiAPI["Google Gemini 2.5 Flash API"]
+        OfflineEngine["Offline Fallback Engine"]
+        SQLite[("SQLite: data/cognify.db")]
         
-        AIEngine -->|If GEMINI_API_KEY Present| Gemini
-        AIEngine -->|If Key Omitted or Demo Flag| MockEngine
-        DB --> SQLiteDB
-        Telemetry -->|DataFrame Query| SQLiteDB
-        Telemetry --> ChartGen
+        AI -->|If API Key Present| GeminiAPI
+        AI -->|If No API Key| OfflineEngine
+        DB --> SQLite
+        Analytics -->|Read Attempts| SQLite
     end
 
-    ChartGen -->|Streaming PNG Bytes| UI
-    SQLiteDB -->|KPIs & Saved Sessions| Router
+    State -->|Fetch / REST API| Router
+    Analytics -->|Rendered PNG Stream| UI
 ```
 
 ---
 
-## 🚀 Key Feature Suite
+## Technical Highlights
 
-1. **Structured Academic Extraction via Google Gemini 2.5 Flash**:
-   - Integrates the official `google-genai` SDK using `gemini-2.5-flash`.
-   - Strictly validates outputs against a strongly typed `StudyPackSchema` using **Pydantic v2**.
-   - Extracts executive summaries, key terms with academic definitions and exam warnings, 3D active-recall flashcards, formula/rule cheatsheets, common exam traps, a 5-question active recall test, and an algorithmic 3-step study roadmap.
-
-2. **Zero-Config Offline Demo Mode**:
-   - **Crucial Portfolio Feature**: Cognify is 100% operational immediately upon cloning without requiring an active API key or cloud credentials.
-   - Detects when `GEMINI_API_KEY` is not configured and dynamically routes queries through an adaptive domain synthesis engine with hyper-realistic technical topic banks (Calculus, Molecular Biology, Distributed Systems, Geopolitics).
-
-3. **3D Interactive Flip Flashcards & Spaced-Repetition Engine**:
-   - Real-time 3D CSS perspective card flips on click or via keyboard shortcut (`Spacebar`).
-   - Leitner Spaced-Repetition rating buttons: **Again (1m)**, **Hard (6m)**, **Good (1d)**, **Easy (4d)**.
-   - Every rating is persisted to the `flashcard_reviews` SQLite table for retention analytics.
-
-4. **Interactive Active-Recall Quiz Engine**:
-   - 5-question multiple choice quizzes with instant grading, option badges (A, B, C, D), and expandable pedagogical explanations.
-   - Live elapsed-time stopwatch and full keyboard accessibility (`1-4` for option selection, `Enter` to advance).
-   - Audio Tutor button utilizing the native **Web Speech API** to read questions and explanations aloud.
-   - Generates a post-quiz diagnostic scorecard classifying performance (Mastery $\ge 80\%$, Proficient $65-79\%$, At-Risk $<65\%$).
-   - Automatically logs weak subtopic tags to SQLite upon quiz completion.
-
-5. **Headless Multi-View Pandas & Matplotlib Telemetry Engine**:
-   - Configured with `matplotlib.use("Agg")` for thread-safe macOS and headless Linux execution.
-   - **View 1: Mastery & Retention** (`?view=mastery`):
-     - Left: **Subject Mastery Index (%)** horizontal bar chart color-coded dynamically (Emerald $\ge 80\%$, Sky Blue $65-79\%$, Rose $<65\%$).
-     - Right: **Rolling Retention & Score Progression Curve** with shaded confidence envelope and an 80% mastery benchmark.
-   - **View 2: Diagnostics & Pace** (`?view=diagnostics`):
-     - Left: **Weak-Spot Diagnostic Frequency** error counts across all past attempts.
-     - Right: **Study Pace vs Mastery Correlation** scatter quadrant with polynomial efficiency fit.
-
-6. **Full Academic Export Engine**:
-   - **Markdown (.md)**: One-click formatted download with executive summaries, concept tables, formulas, and flashcards.
-   - **Anki Flashcard Deck (.txt)**: Tab-separated, HTML-ready file formatted directly for import into Anki desktop or mobile.
-   - **Clipboard & PDF Print**: Copy full study guide to clipboard or trigger print-optimized CSS for PDF archiving.
-
-7. **Linear / Vercel Dark Mode Baseline (`#09090b`)**:
-   - Modern, high-craft dark aesthetic featuring radial gradient button highlights, repeating diagonal linear gradient accents, mobile sliding drawer (`MotionDrawer`), live search in saved sessions, and clean typography (`Space Grotesk`, `Inter`, `JetBrains Mono`).
+- **Typed Schema Validation**: Built on Google's `google-genai` SDK and Pydantic v2. The language model is constrained to output structured JSON matching a strict `StudyPackSchema`, preventing schema mismatch and hallucinations.
+- **Headless Plotting on macOS & Linux**: `analytics.py` binds `matplotlib.use("Agg")` before importing Pyplot, avoiding GUI window server crashes and serving streaming PNG charts directly from memory buffers.
+- **Decoupled Architecture**: The frontend is vanilla JavaScript with a centralized reactive state store, keeping the UI independent of backend templates and easy to restyle or port.
 
 ---
 
-## 📂 Project Structure
+## Getting Started
 
-```text
-cognify/
-├── .gitignore               # Ignores venv, SQLite data/*.db, caches, and secrets
-├── .env.example             # Template for GEMINI_API_KEY and server flags
-├── requirements.txt         # Core dependencies (Flask, google-genai, pydantic, pandas, matplotlib)
-├── app.py                   # Flask REST server, routes, and export engine on port 5001
-├── ai_engine.py             # Gemini 2.5 Flash wrapper with strict Pydantic schema + Demo fallback
-├── database.py              # SQLite persistence (study_sessions, quiz_attempts, flashcard_reviews)
-├── analytics.py             # Headless Pandas + Matplotlib multi-view telemetry chart generator
-├── templates/
-│   └── index.html           # Semantic, modular HTML5 workspace with mobile drawer
-├── static/
-│   ├── css/
-│   │   └── style.css        # Linear/Vercel dark-mode styling, 3D flashcards, print CSS
-│   └── js/
-│       └── app.js           # Decoupled vanilla JS state manager, audio tutor, quiz engine
-└── README.md                # Technical documentation & API contract
-```
-
----
-
-## 🛠️ Quickstart & Installation
-
-### 1. Clone & Enter Directory
+### 1. Clone the repository
 ```bash
-cd /Users/lalitgudla/.gemini/antigravity/scratch/cognify
+git clone https://github.com/lalitg13/cognify.git
+cd cognify
 ```
 
-### 2. Configure Virtual Environment & Install Dependencies
+### 2. Set up a virtual environment
 ```bash
 python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### 3. (Optional) Set Environment Variables
-If you want to use live Gemini calls:
+### 3. (Optional) Configure Gemini API Key
+Cognify runs in demo mode out of the box. If you want live AI generations with your own Google Gemini key:
 ```bash
 cp .env.example .env
-# Edit .env and paste your GEMINI_API_KEY
 ```
-*Note: If no `.env` file exists or `GEMINI_API_KEY` is not set, Cognify runs flawlessly in **Zero-Config Demo Mode**.*
+Open `.env` and paste your key:
+```env
+GEMINI_API_KEY=your_actual_gemini_api_key_here
+```
+You can also supply or change your API key at any time directly through the in-app modal.
 
-### 4. Start the Application
+### 4. Run the server
 ```bash
 python app.py
 ```
-Open your browser and navigate to: **[http://localhost:5001](http://localhost:5001)**.
+Open your browser and visit: **http://localhost:5001**
 
 ---
 
-## 🔌 REST API Contract
+## Project Structure
+
+```text
+cognify/
+├── .env.example             # Environment variable template
+├── .gitignore               # Ignores venv, local databases, and caches
+├── requirements.txt         # Core dependencies
+├── app.py                   # Flask REST server and route handlers
+├── ai_engine.py             # Gemini 2.5 Flash wrapper + Pydantic schema + offline fallback
+├── database.py              # SQLite storage layer with seed data
+├── analytics.py             # Headless Pandas and Matplotlib chart generator
+├── templates/
+│   └── index.html           # Semantic HTML5 layout
+├── static/
+│   ├── css/
+│   │   └── style.css        # Dark-mode styling, 3D card physics, and animations
+│   └── js/
+│       └── app.js           # Vanilla JS state store, Leitner reviews, and quiz runner
+└── README.md                # Documentation and architecture guide
+```
+
+---
+
+## API Reference
 
 | Endpoint | Method | Description |
 | :--- | :--- | :--- |
-| `GET /api/dashboard` | `GET` | Fetches aggregate KPIs, AI status, and recent history. |
-| `POST /api/generate` | `POST` | Submits raw notes; returns structured `StudyPackSchema` + `session_id`. |
-| `GET /api/session/<id>` | `GET` | Retrieves full JSON payload of a saved study session. |
-| `DELETE /api/session/<id>` | `DELETE` | Deletes a saved study session and related quiz logs. |
-| `POST /api/submit_quiz` | `POST` | Logs a completed quiz attempt, updating mastery scores and weak subtopics. |
-| `POST /api/flashcard/review`| `POST` | Logs Leitner rating (`again`, `hard`, `good`, `easy`) for spaced repetition. |
-| `GET /api/analytics.png` | `GET` | Streams live Matplotlib telemetry image (`?view=mastery` or `?view=diagnostics`). |
-| `GET /api/export/<id>/markdown` | `GET` | Generates and downloads formatted `.md` study guide. |
-| `GET /api/export/<id>/anki` | `GET` | Generates and downloads formatted `.txt` Anki import deck. |
-| `POST /api/reset_demo` | `POST` | Drops and re-initializes SQLite database with pristine historical seed data. |
+| `/api/dashboard` | GET | Returns summary KPIs, AI mode status, and recent study sessions. |
+| `/api/generate` | POST | Accepts raw notes and optional subject hint; returns a validated study pack. |
+| `/api/session/<id>` | GET | Retrieves full JSON payload of a previously saved study session. |
+| `/api/session/<id>` | DELETE | Deletes a study session and its corresponding quiz records. |
+| `/api/submit_quiz` | POST | Logs quiz completion, score percentage, duration, and weak subtopics. |
+| `/api/flashcard/review` | POST | Logs spaced repetition ratings (`again`, `hard`, `good`, `easy`). |
+| `/api/analytics.png` | GET | Returns a live Matplotlib chart (`view=mastery` or `view=diagnostics`). |
+| `/api/export/<id>/markdown` | GET | Generates and downloads a clean Markdown study guide. |
+| `/api/export/<id>/anki` | GET | Generates a tab-delimited Anki deck file ready for import. |
+| `/api/reset_demo` | POST | Re-initializes the local SQLite database with default sample data. |
 
 ---
 
-## 🧪 Verification & Automated Tests
+## Verification & Testing
 
-Verify all components via the command line:
+You can verify the backend services from your terminal:
 
 ```bash
-# 1. Test database schema & auto-seeder
+# Test SQLite initialization and seeding
 python database.py
 
-# 2. Test headless analytics chart generation
+# Test headless Matplotlib figure generation
 python analytics.py
 
-# 3. Test AI engine fallback & schema compliance
+# Test AI engine schema and offline fallback
 python ai_engine.py
 
-# 4. Run end-to-end API test suite
+# Run API integration checks
 python -c "
 from app import app
 client = app.test_client()
 assert client.get('/api/dashboard').status_code == 200
 assert client.get('/api/analytics.png?view=mastery').status_code == 200
-assert client.get('/api/analytics.png?view=diagnostics').status_code == 200
-assert client.get('/api/export/1/markdown').status_code == 200
-assert client.get('/api/export/1/anki').status_code == 200
-print('All core API integration tests passed.')
+print('All core API routes verified.')
 "
 ```
 
 ---
 
-## 📄 License
-MIT License. Built for high-leverage academic retention and engineering portfolios.
+## License
+
+MIT License. Feel free to use, modify, and build upon this project.
